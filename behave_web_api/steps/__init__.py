@@ -97,14 +97,14 @@ def the_response_should_contain_text(context):
 
 @then(u'the response should have the exact same text')
 @dereference_arguments
-def the_response_should_contain_text(context):
+def the_response_should_contain_exact_text(context):
     a = context.processed_text
     b = context.response.text
 
     diff = list(difflib.ndiff(a.splitlines(), b.splitlines()))
     diff_string = "\n".join(diff)
 
-    assert len(diff) == 0, 'Texts are not the same:\n{}'.format(diff_string)
+    assert len(diff) == len(list(a.splitlines())), 'Texts are not the same:\n{}'.format(diff_string)
 
 
 @then(u'print response')
