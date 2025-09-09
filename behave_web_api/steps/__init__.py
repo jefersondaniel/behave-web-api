@@ -3,6 +3,7 @@ import sys
 import json
 import mimetypes
 from behave import *
+import difflib
 
 from behave_web_api.utils import dereference_arguments, do_request,\
     compare_values, compare_contents
@@ -92,6 +93,18 @@ def the_response_should_contain_json(context):
 @dereference_arguments
 def the_response_should_contain_text(context):
     compare_contents(context.processed_text, context.response.text)
+
+
+@then(u'the response should have the exact same text')
+@dereference_arguments
+def the_response_should_contain_text(context):
+    a = context.processed_text
+    b = context.response.text
+
+    diff = list(difflib.ndiff(a.splitlines(), b.splitlines()))
+    diff_string = "\n".join(diff)
+
+    assert len(diff) == 0, 'Texts are not the same:\n{}'.format(diff_string)
 
 
 @then(u'print response')
