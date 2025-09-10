@@ -1,6 +1,6 @@
 # Changelog
 
-## [2.1.0](https://github.com/jefersondaniel/behave-web-api/compare/2.0.0...v2.1.0) (2025-09-10)
+## [2.3.0](https://github.com/jefersondaniel/behave-web-api/compare/2.0.0...v2.3.0) (2025-09-10)
 
 
 ### Features
