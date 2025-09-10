@@ -1,13 +1,9 @@
-from __future__ import unicode_literals
 import os
 import re
 import requests
 from functools import wraps
 
-try:
-    string_type = basestring
-except NameError:  # Python 3, basestring causes NameError
-    string_type = str
+string_type = str
 
 
 def make_url(context, endingpoint):
@@ -22,7 +18,7 @@ def dereference_variables(context, value):
     variables = context.variables\
         if hasattr(context, 'variables') else {}
 
-    for key in re.findall('\$+\w+', value):
+    for key in re.findall(r'\$+\w+', value):
         var_name = key[1:]
         value = value.replace(
             key,

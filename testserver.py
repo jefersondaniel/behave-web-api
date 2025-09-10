@@ -1,35 +1,45 @@
 import json
-from bottle import Bottle, run, request
+from fastapi import FastAPI, Request
+from fastapi.responses import JSONResponse
+from starlette.datastructures import UploadFile
+import uvicorn
 
-app = Bottle()
+
+app = FastAPI()
 
 
-@app.route('/requests/echo', method='ANY')
-def echo():
+@app.api_route("/requests/echo", methods=["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS", "HEAD"])
+async def echo(request: Request):
     try:
-        body = request.body.read().decode('utf-8')
-    except:
+        body_bytes = await request.body()
+        body = body_bytes.decode("utf-8")
+    except Exception:
         body = None
 
-    print(request.headers['Content-Type'])
+    print(request.headers.get("Content-Type"))
 
-    if request.headers['Content-Type'] == 'application/json':
+    if request.headers.get("Content-Type") == "application/json":
         try:
             body = json.loads(body)
-        except:
+        except Exception:
             pass
 
+    files = []
+    form = await request.form()
+    for key, value in form.multi_items():
+        if isinstance(value, UploadFile):
+            files.append({"key": key, "name": value.filename})
+
     result = {
-        'method': request.method,
-        'headers': dict(request.headers),
-        'body': body,
-        'files': [
-            {'key': key, 'name': request.files[key].raw_filename}
-            for key in request.files
-        ]
+        "method": request.method,
+        "headers": {k.title(): v for k, v in request.headers.items()},
+        "body": body,
+        "files": files,
     }
 
-    return result
+    return JSONResponse(result)
 
 
-run(app, host='localhost', port='5000')
+if __name__ == "__main__":
+    uvicorn.run(app, host="localhost", port=5000)
+
