@@ -12,7 +12,7 @@ Installation
 
 ::
 
-    uv pip install behave-web-api
+    uv add behave-web-api
 
 Import steps in your features/steps/__init__.py
 

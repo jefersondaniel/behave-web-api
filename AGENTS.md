@@ -6,16 +6,20 @@
   - `fix: update bottle dependency`
   - `docs: add contribution guide`
 
+## Dependencies
+- Use `uv add` to add runtime dependencies.
+- Use `uv add --group test` for dev/test dependencies.
+
 ## Testing
-- Install dependencies: `uv pip install --system -e ".[test]"`
-- Run the full test suite: `./runtests.sh`
+- Sync dependencies: `uv sync --all-extras`
+- Run the full test suite: `uv run ./runtests.sh`
 
 ## Coverage
 - Generate coverage:
-  - `coverage erase`
-  - `pytest --cov=behave_web_api --cov-report=term-missing`
-  - `BASE_URL=localhost:5000 coverage run --append -m behave features/requests.feature`
-  - `coverage report -m`
+  - `uv run coverage erase`
+  - `uv run pytest --cov=behave_web_api --cov-report=term-missing`
+  - `BASE_URL=localhost:5000 uv run coverage run --append -m behave features/requests.feature`
+  - `uv run coverage report -m`
 - Ensure coverage does not decrease.
 
 ## Python Version
