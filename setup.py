@@ -10,7 +10,7 @@ __version__ = version_module.__version__
 long_description = open('README.rst', 'r').read()
 
 install_requires = [
-    'behave==1.2.6',
+    'behave>=1.2.6,<2.0.0',
     'requests>=2.31.0',
 ]
 

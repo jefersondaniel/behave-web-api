@@ -59,7 +59,7 @@ test = [
 
 [package.metadata]
 requires-dist = [
-    { name = "behave", specifier = "==1.2.6" },
+    { name = "behave", specifier = ">=1.2.6,<2.0.0" },
     { name = "coverage", marker = "extra == 'test'", specifier = "==7.4.4" },
     { name = "fastapi", marker = "extra == 'test'", specifier = "==0.110.0" },
     { name = "pytest", marker = "extra == 'test'", specifier = "==8.1.1" },
