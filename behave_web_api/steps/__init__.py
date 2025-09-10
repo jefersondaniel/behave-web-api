@@ -1,18 +1,16 @@
 import os
-import sys
 import json
 import mimetypes
 from behave import *
 import difflib
+from collections import OrderedDict
 
-from behave_web_api.utils import dereference_arguments, do_request,\
-    compare_values, compare_contents
-
-
-if sys.version_info[0] == 2 and sys.version_info[1] <= 6:
-    from ordereddict import OrderedDict
-else:
-    from collections import OrderedDict
+from behave_web_api.utils import (
+    dereference_arguments,
+    do_request,
+    compare_values,
+    compare_contents,
+)
 
 
 @given(u'I set header "{}" with value "{}"')

@@ -73,7 +73,7 @@ class UtilsTest(unittest.TestCase):
 
         try:
             utils.compare_contents(
-                '%my name is \w+%',
+                r'%my name is \w+%',
                 'Hi my name is Bob Bob'
             )
         except AssertionError as e:
@@ -86,7 +86,7 @@ class UtilsTest(unittest.TestCase):
 
         try:
             utils.compare_contents(
-                '%my name is not \w+%',
+                r'%my name is not \w+%',
                 'Hi my name is Bob Bob'
             )
         except AssertionError as e:

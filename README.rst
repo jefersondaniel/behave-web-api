@@ -5,12 +5,14 @@ Behave Web Api
 
 Provides testing for JSON APIs with Behave [1]_
 
+Requires Python 3.11 or newer.
+
 Installation
 ------------
 
 ::
 
-    pip install behave-web-api
+    uv add behave-web-api
 
 Import steps in your features/steps/__init__.py
 
