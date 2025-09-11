@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.3.1](https://github.com/jefersondaniel/behave-web-api/compare/v2.3.0...v2.3.1) (2025-09-11)
+
+
+### Bug Fixes
+
+* declare classifiers in pyproject ([#15](https://github.com/jefersondaniel/behave-web-api/issues/15)) ([52bea79](https://github.com/jefersondaniel/behave-web-api/commit/52bea792db7d402404f83a35910cd57d380870f4))
+
 ## [2.3.0](https://github.com/jefersondaniel/behave-web-api/compare/2.0.0...v2.3.0) (2025-09-10)
 
 
