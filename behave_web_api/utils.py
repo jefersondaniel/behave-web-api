@@ -53,12 +53,12 @@ def compare_lists(expected_list, actual_list, path=None):
         "Actual {0} is not a list".format(repr(actual_list))
 
     for i, item in enumerate(expected_list):
-        path = '{0}.{1}'.format(path, i) if path else str(i)
+        current_path = '{0}.{1}'.format(path, i) if path else str(i)
         try:
             actual_value = actual_list[i]
         except ValueError:
             actual_value = None
-        compare_values(item, actual_value, path=path)
+        compare_values(item, actual_value, path=current_path)
 
 
 def compare_dicts(expected_dict, actual_dict, path=None):
@@ -70,9 +70,9 @@ def compare_dicts(expected_dict, actual_dict, path=None):
     for key in expected_dict:
         expected_value = expected_dict[key]
         actual_value = actual_dict.get(key, None)
-        path = '{0}.{1}'.format(path, key) if path else key
+        current_path = '{0}.{1}'.format(path, key) if path else key
 
-        compare_values(expected_value, actual_value, path=path)
+        compare_values(expected_value, actual_value, path=current_path)
 
 
 def validate_value(validator, value):
