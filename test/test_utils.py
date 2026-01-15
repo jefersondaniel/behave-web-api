@@ -213,3 +213,153 @@ class UtilsTest(unittest.TestCase):
             'Expected \'eve\' to equal \'charlie\' at path data.users.2',
             error.args[0]
         )
+
+    def test_get_nested_value_simple_key(self):
+        """Test get_nested_value with simple dictionary key"""
+        obj = {'name': 'Alice'}
+        result = utils.get_nested_value(obj, 'name')
+        self.assertEqual('Alice', result)
+
+    def test_get_nested_value_nested_keys(self):
+        """Test get_nested_value with nested dictionary keys"""
+        obj = {'user': {'name': 'Alice', 'age': 30}}
+        result = utils.get_nested_value(obj, 'user.name')
+        self.assertEqual('Alice', result)
+
+    def test_get_nested_value_list_index(self):
+        """Test get_nested_value with list index"""
+        obj = {'items': [1, 2, 3]}
+        result = utils.get_nested_value(obj, 'items.1')
+        self.assertEqual(2, result)
+
+    def test_get_nested_value_mixed_path(self):
+        """Test get_nested_value with mixed dict and list path"""
+        obj = {
+            'data': {
+                'users': [
+                    {'name': 'Alice', 'age': 30},
+                    {'name': 'Bob', 'age': 25}
+                ]
+            }
+        }
+        result = utils.get_nested_value(obj, 'data.users.1.name')
+        self.assertEqual('Bob', result)
+
+    def test_get_nested_value_nonexistent_key(self):
+        """Test get_nested_value with nonexistent key"""
+        obj = {'name': 'Alice'}
+        result = utils.get_nested_value(obj, 'age')
+        self.assertIsNone(result)
+
+    def test_get_nested_value_out_of_bounds_index(self):
+        """Test get_nested_value with out of bounds list index"""
+        obj = {'items': [1, 2, 3]}
+        result = utils.get_nested_value(obj, 'items.10')
+        self.assertIsNone(result)
+
+    def test_get_nested_value_invalid_path_type(self):
+        """Test get_nested_value with invalid path (non-dict/list)"""
+        obj = {'value': 'string'}
+        result = utils.get_nested_value(obj, 'value.nested')
+        self.assertIsNone(result)
+
+    def test_object_matches_exact_match(self):
+        """Test object_matches with exact match"""
+        actual = {'a': 1, 'b': 2}
+        expected = {'a': 1, 'b': 2}
+        self.assertTrue(utils.object_matches(actual, expected))
+
+    def test_object_matches_partial_match(self):
+        """Test object_matches with partial match (actual has extra fields)"""
+        actual = {'a': 1, 'b': 2, 'c': 3}
+        expected = {'a': 1, 'b': 2}
+        self.assertTrue(utils.object_matches(actual, expected))
+
+    def test_object_matches_missing_field(self):
+        """Test object_matches when actual is missing expected field"""
+        actual = {'a': 1}
+        expected = {'a': 1, 'b': 2}
+        self.assertFalse(utils.object_matches(actual, expected))
+
+    def test_object_matches_wrong_value(self):
+        """Test object_matches when value doesn't match"""
+        actual = {'a': 1, 'b': 999}
+        expected = {'a': 1, 'b': 2}
+        self.assertFalse(utils.object_matches(actual, expected))
+
+    def test_object_matches_nested_objects(self):
+        """Test object_matches with nested objects"""
+        actual = {
+            'user': {
+                'name': 'Alice',
+                'address': {
+                    'city': 'NYC',
+                    'country': 'USA',
+                    'zip': '10001'
+                },
+                'age': 30
+            }
+        }
+        expected = {
+            'user': {
+                'name': 'Alice',
+                'address': {
+                    'country': 'USA'
+                }
+            }
+        }
+        self.assertTrue(utils.object_matches(actual, expected))
+
+    def test_object_matches_nested_objects_mismatch(self):
+        """Test object_matches with nested objects that don't match"""
+        actual = {
+            'user': {
+                'address': {
+                    'country': 'USA'
+                }
+            }
+        }
+        expected = {
+            'user': {
+                'address': {
+                    'country': 'Canada'
+                }
+            }
+        }
+        self.assertFalse(utils.object_matches(actual, expected))
+
+    def test_object_matches_with_lists(self):
+        """Test object_matches with lists (exact match required for lists)"""
+        actual = {'tags': ['python', 'javascript']}
+        expected = {'tags': ['python', 'javascript']}
+        self.assertTrue(utils.object_matches(actual, expected))
+
+    def test_object_matches_with_different_list_length(self):
+        """Test object_matches with lists of different lengths"""
+        actual = {'tags': ['python', 'javascript', 'java']}
+        expected = {'tags': ['python', 'javascript']}
+        self.assertFalse(utils.object_matches(actual, expected))
+
+    def test_object_matches_type_mismatch(self):
+        """Test object_matches when types don't match"""
+        actual = {'value': 'string'}
+        expected = {'value': 123}
+        self.assertFalse(utils.object_matches(actual, expected))
+
+    def test_object_matches_primitives(self):
+        """Test object_matches with primitive values"""
+        self.assertTrue(utils.object_matches(42, 42))
+        self.assertTrue(utils.object_matches('hello', 'hello'))
+        self.assertFalse(utils.object_matches(42, 43))
+
+    def test_get_nested_value_with_none_intermediate(self):
+        """Test get_nested_value when intermediate value is None"""
+        obj = {'user': None}
+        result = utils.get_nested_value(obj, 'user.name')
+        self.assertIsNone(result)
+
+    def test_object_matches_with_none_values(self):
+        """Test object_matches with None values"""
+        self.assertTrue(utils.object_matches(None, None))
+        self.assertFalse(utils.object_matches({'a': None}, {'a': 1}))
+        self.assertTrue(utils.object_matches({'a': None, 'b': 2}, {'a': None}))

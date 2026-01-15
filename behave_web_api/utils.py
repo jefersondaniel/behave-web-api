@@ -135,6 +135,82 @@ def compare_contents(expected_value, actual_value):
             'Expected response to contain text \'{0}\''.format(expected_value)
 
 
+def get_nested_value(obj, path):
+    """
+    Navigate to nested value using dot notation path.
+    Supports dictionary keys and list indices.
+
+    Args:
+        obj: The object to navigate
+        path: Dot-separated path (e.g., "data.users.0.name")
+
+    Returns:
+        The value at the specified path, or None if not found
+
+    Examples:
+        get_nested_value({"a": {"b": 1}}, "a.b") -> 1
+        get_nested_value({"items": [1, 2, 3]}, "items.1") -> 2
+    """
+    keys = path.split('.')
+    current = obj
+
+    for key in keys:
+        if current is None:
+            return None
+
+        if isinstance(current, dict):
+            current = current.get(key)
+        elif isinstance(current, list):
+            if key.isdigit():
+                index = int(key)
+                current = current[index] if index < len(current) else None
+            else:
+                return None
+        else:
+            return None
+
+    return current
+
+
+def object_matches(actual, expected):
+    """
+    Check if actual object contains all fields from expected (partial match).
+    This is a partial/subset match - actual can have extra fields.
+
+    Args:
+        actual: The actual object to check
+        expected: The expected object (can be partial)
+
+    Returns:
+        True if actual contains all fields from expected with matching values
+
+    Examples:
+        object_matches({"a": 1, "b": 2}, {"a": 1}) -> True
+        object_matches({"a": 1}, {"a": 1, "b": 2}) -> False
+        object_matches({"a": {"b": 1, "c": 2}}, {"a": {"b": 1}}) -> True
+    """
+    if isinstance(expected, dict):
+        if not isinstance(actual, dict):
+            return False
+        for key, value in expected.items():
+            if key not in actual:
+                return False
+            if not object_matches(actual[key], value):
+                return False
+        return True
+    elif isinstance(expected, list):
+        if not isinstance(actual, list):
+            return False
+        if len(expected) != len(actual):
+            return False
+        for i, value in enumerate(expected):
+            if not object_matches(actual[i], value):
+                return False
+        return True
+    else:
+        return actual == expected
+
+
 def do_request(context, method, endingpoint, body=None):
     fn = getattr(requests, method.lower())
     kwargs = {}

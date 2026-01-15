@@ -101,3 +101,67 @@ Feature: Doing http requests
             }
         }
     """
+
+  Scenario: Verify JSON path contains object with partial match
+    Given I set header "Content-Type" with value "application/json"
+    When I send a POST request to "/requests/echo" with body:
+    """
+    {
+        "data": {
+            "users": [
+                {
+                    "id": 1,
+                    "name": "Alice",
+                    "email": "alice@example.com",
+                    "address": {
+                        "city": "New York",
+                        "country": "USA"
+                    }
+                },
+                {
+                    "id": 2,
+                    "name": "Bob",
+                    "email": "bob@example.com",
+                    "address": {
+                        "city": "London",
+                        "country": "UK"
+                    }
+                },
+                {
+                    "id": 3,
+                    "name": "Charlie",
+                    "email": "charlie@example.com",
+                    "address": {
+                        "city": "Toronto",
+                        "country": "Canada"
+                    }
+                }
+            ]
+        }
+    }
+    """
+    Then the response code should be 200
+    And the response JSON at path "body.data.users" should contain an object with:
+    """
+    {
+        "name": "Bob",
+        "address": {
+            "country": "UK"
+        }
+    }
+    """
+    And the response JSON at path "body.data.users" should contain an object with:
+    """
+    {
+        "id": 1,
+        "name": "Alice"
+    }
+    """
+    And the response JSON at path "body.data.users" should contain an object with:
+    """
+    {
+        "address": {
+            "city": "Toronto"
+        }
+    }
+    """
