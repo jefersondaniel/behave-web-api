@@ -10,6 +10,8 @@ from behave_web_api.utils import (
     do_request,
     compare_values,
     compare_contents,
+    get_nested_value,
+    object_matches,
 )
 
 
@@ -108,3 +110,53 @@ def the_response_should_contain_exact_text(context):
 @then(u'print response')
 def print_response(context):
     print(context.response.text)
+
+
+@then(u'the response JSON at path "{json_path}" should contain an object with')
+@dereference_arguments
+def response_json_path_contains_object(context, json_path):
+    """
+    Search for an object with specified fields anywhere in an array at the given JSON path.
+    The expected object is provided as a JSON doc string and performs partial matching.
+
+    This step navigates to a JSON path and verifies that the array at that location
+    contains at least one object matching the expected fields. The match is partial,
+    meaning the actual objects can have additional fields not specified in the expected object.
+
+    Args:
+        context: Behave context containing the response and text
+        json_path: Dot-separated path to the array (e.g., "data.users" or "items.0.tags")
+
+    Example:
+        Then the response JSON at path "data.users" should contain an object with
+        '''
+        {
+            "name": "Alice",
+            "address": {
+                "country": "USA"
+            }
+        }
+        '''
+    """
+    response_json = context.response.json()
+    target_array = get_nested_value(response_json, json_path)
+    expected_obj = json.loads(context.processed_text)
+
+    assert target_array is not None, \
+        f'Path "{json_path}" does not exist in response'
+
+    assert isinstance(target_array, list), \
+        f'Expected array at path "{json_path}" but got {type(target_array).__name__}'
+
+    # Search for matching object in the array
+    for item in target_array:
+        if object_matches(item, expected_obj):
+            return  # Found matching object
+
+    # No matching object found - provide detailed error message consistent with compare_values
+    actual_json = json.dumps(target_array, indent=2)
+    expected_json = json.dumps(expected_obj, indent=2)
+    assert False, \
+        f'No object matching the expected value found at path "{json_path}"\n' \
+        f'Expected to find object:\n{expected_json}\n' \
+        f'Actual array at path "{json_path}":\n{actual_json}'
